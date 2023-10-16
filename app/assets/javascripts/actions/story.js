@@ -2,9 +2,7 @@ import actionTypes from './actionTypes';
 import { sendSuccessNotification, sendErrorNotification, sendDefaultErrorNotification } from './notifications';
 import { wait } from '../services/promises';
 import { storyScopes } from '../libs/beta/constants';
-import httpService from '../services/httpService';
 import projectStoriesService from '../services/stories';
-import changeCase from 'change-object-case';
 
 export const createStory = (attributes, from) => ({
   type: actionTypes.CREATE_STORY,
