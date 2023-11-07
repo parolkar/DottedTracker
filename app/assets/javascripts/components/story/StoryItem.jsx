@@ -3,8 +3,12 @@ import PropTypes from 'prop-types';
 import CollapsedStory from './CollapsedStory';
 import ExpandedStory from './ExpandedStory';
 import { connect } from 'react-redux';
-import { fetchEpic, expandOrCollapseStory } from '../../actions/story';
-import { releaseIsLate, isHighlighted, isAccepted } from '../../models/beta/story';
+import { toggleStory, fetchEpic } from '../../actions/story';
+import {
+  releaseIsLate,
+  isHighlighted,
+  isAccepted,
+} from '../../models/beta/story';
 import classNames from 'classnames';
 
 export const StoryItem = ({
@@ -14,19 +18,21 @@ export const StoryItem = ({
   index,
   sprintIndex,
   columnId,
-  fetchEpic
+  fetchEpic,
 }) => {
   const className = classNames({
     'Story--late-release': releaseIsLate(story),
     'Story--highlighted': isHighlighted(story),
     'Story--accepted': isAccepted(story),
   });
-  const title = releaseIsLate(story) ? I18n.t('story.warnings.backlogged_release') : '';
+  const title = releaseIsLate(story)
+    ? I18n.t('story.warnings.backlogged_release')
+    : '';
 
   const handleClickLabel = (e, label) => {
     e.stopPropagation();
     fetchEpic(label);
-  }
+  };
 
   const childProps = {
     story,
@@ -39,21 +45,16 @@ export const StoryItem = ({
     index,
     sprintIndex,
     columnId,
-    onLabelClick: handleClickLabel
-  }
+    onLabelClick: handleClickLabel,
+  };
 
   return (
-    <div className='story-container'>
-      {
-        story.collapsed
-          ? <CollapsedStory
-            {...childProps}
-          />
-          : <ExpandedStory
-            {...childProps}
-            data-id="expanded-story"
-          />
-      }
+    <div className="story-container">
+      {story.collapsed ? (
+        <CollapsedStory {...childProps} />
+      ) : (
+        <ExpandedStory {...childProps} data-id="expanded-story" />
+      )}
     </div>
   );
 };

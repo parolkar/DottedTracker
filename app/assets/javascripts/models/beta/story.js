@@ -1,14 +1,14 @@
-import { status, storyTypes, storyScopes } from "libs/beta/constants";
-import httpService from "../../services/httpService";
-import changeCase from "change-object-case";
-import * as Label from "./label";
-import PropTypes from "prop-types";
+import { status, storyTypes, storyScopes } from 'libs/beta/constants';
+import httpService from '../../services/httpService';
+import changeCase from 'change-object-case';
+import * as Label from './label';
+import PropTypes from 'prop-types';
 import StoryPropTypesShape, {
   storyPropTypes,
-} from "../../components/shapes/story";
-import moment from "moment";
-import { has } from "underscore";
-import * as History from "./history";
+} from '../../components/shapes/story';
+import moment from 'moment';
+import { has } from 'underscore';
+import * as History from './history';
 
 const compareValues = (a, b) => {
   if (a > b) return 1;
@@ -18,7 +18,7 @@ const compareValues = (a, b) => {
   return 0;
 };
 
-export const needConfirmation = (story) =>
+export const needConfirmation = story =>
   story.state === status.ACCEPTED ||
   story.state === status.REJECTED ||
   story.state === status.RELEASE;
@@ -42,79 +42,79 @@ export const compareStartedAt = (a, b) => {
   return compareValues(a.startedAt, b.startedAt);
 };
 
-export const isUnestimatedFeature = (story) =>
+export const isUnestimatedFeature = story =>
   !hasEstimate(story) && isFeature(story);
 
-export const isInProgress = (story) =>
+export const isInProgress = story =>
   !isUnscheduled(story) && !isUnstarted(story);
 
-export const isFeature = (story) => {
+export const isFeature = story => {
   return story.storyType === storyTypes.FEATURE;
 };
 
-export const isUnscheduled = (story) => {
+export const isUnscheduled = story => {
   return story.state === status.UNSCHEDULED;
 };
 
-export const isUnstarted = (story) => {
+export const isUnstarted = story => {
   return story.state === status.UNSTARTED;
 };
 
-export const isAccepted = (story) => {
+export const isAccepted = story => {
   return story.state === status.ACCEPTED;
 };
 
-export const totalPoints = (stories) =>
+export const totalPoints = stories =>
   stories.reduce((total, current) => total + getPoints(current), 0);
 
-export const isHighlighted = (story) => Boolean(story.highlighted);
+export const isHighlighted = story => Boolean(story.highlighted);
 
-export const getPoints = (story) =>
+export const getPoints = story =>
   isFeature(story) ? Number(story.estimate) : 0;
 
-export const getCompletedPoints = (story) =>
+export const getCompletedPoints = story =>
   isFeature(story) && isAccepted(story) ? story.estimate : 0;
 
 export const isSameState = (story1, story2) => story1.state === story2.state;
 
 export const isStoryNotEstimated = (storyType, estimate) =>
-  storyType === "feature" && !estimate;
+  storyType === 'feature' && !estimate;
 
-export const isRelease = (story) => story.storyType === storyTypes.RELEASE;
+export const isRelease = story => story.storyType === storyTypes.RELEASE;
 
-export const hasHistory = (story) => !isRelease(story);
+export const hasHistory = story => !isRelease(story);
 
-export const releaseIsLate = (story) => {
+export const releaseIsLate = story => {
   if (!isRelease(story)) {
     return false;
   }
 
   const today = moment();
-  const releaseDate = moment(story.releaseDate, ["YYYY-MM-DD"]).endOf("day");
+  const releaseDate = moment(story.releaseDate, ['YYYY-MM-DD']).endOf('day');
 
   return today > releaseDate;
 };
 
-export const possibleStatesFor = (story) =>
+export const possibleStatesFor = story =>
   isUnestimatedFeature(story._editing) ? [states[0]] : states;
 
-export const types = ["feature", "bug", "release", "chore"];
+export const types = ['feature', 'bug', 'release', 'chore'];
 
 export const states = [
-  "unscheduled",
-  "unstarted",
-  "started",
-  "finished",
-  "delivered",
-  "accepted",
-  "rejected",
+  'unscheduled',
+  'unstarted',
+  'started',
+  'finished',
+  'delivered',
+  'accepted',
+  'rejected',
 ];
 
 export const findById = (stories, id) => {
-  return stories.find((story) => story.id === id);
+  return stories.find(story => story.id === id);
 };
 
-export const updatePosition = async (story) => {
+export const updatePosition = async story => {
   const serializedStory = serialize(story);
 
   const { data } = await httpService.post(
@@ -122,7 +122,7 @@ export const updatePosition = async (story) => {
     { story: serializedStory }
   );
 
-  const deserializedData = data.map((item) => deserialize(item.story));
+  const deserializedData = data.map(item => deserialize(item.story));
 
   return deserializedData;
 };
@@ -162,7 +162,7 @@ export const search = async (queryParam, projectId) => {
       timeout: 1500,
     }
   );
-  return data.map((item) => deserialize(item.story));
+  return data.map(item => deserialize(item.story));
 };
 
 export const getByLabel = async (label, projectId) => {
@@ -172,7 +172,7 @@ export const getByLabel = async (label, projectId) => {
       timeout: 1500,
     }
   );
-  return data.map((item) => deserialize(item.story));
+  return data.map(item => deserialize(item.story));
 };
 
 export const getHistory = async (storyId, projectId, users) => {
@@ -189,7 +189,7 @@ export const storyFailure = (story, error) => ({
   needsToSave: false,
 });
 
-export const toggleStory = (story) => {
+export const toggleStory = story => {
   const editing = story.collapsed
     ? { ...story, _isDirty: false, loading: false }
     : null;
@@ -204,7 +204,7 @@ export const toggleStory = (story) => {
 const isUnscheduledState = (story, newAttributes) =>
   isFeature(story._editing) &&
   (isChangingWithoutEstimate(story, newAttributes) ||
-    hasNilProp(newAttributes, "estimate") ||
+    hasNilProp(newAttributes, 'estimate') ||
     isChangingToUnscheduled(story, newAttributes) ||
     isUnscheduled(newAttributes));
 
@@ -212,7 +212,7 @@ const hasNilProp = (story, prop) => has(story, prop) && !story[prop];
 
 const isChangingToUnscheduled = (story, newAttributes) =>
   isUnscheduled(story._editing) &&
-  !has(newAttributes, "state") &&
+  !has(newAttributes, 'state') &&
   !hasEstimate(newAttributes);
 
 const isChangingWithoutEstimate = (story, newAttributes) =>
@@ -224,7 +224,7 @@ export const stateFor = (story, newAttributes, newStory) =>
     : newStory.state;
 
 export const estimateFor = (story, newAttributes, newStory) => {
-  if (isNoEstimated(story, newAttributes)) return "";
+  if (isNoEstimated(story, newAttributes)) return '';
   if (isFeature(newAttributes) && !isUnscheduled(story._editing)) return 1;
 
   return newStory.estimate;
@@ -233,10 +233,10 @@ export const estimateFor = (story, newAttributes, newStory) => {
 const isEstimable = isFeature;
 
 const isNoEstimated = (story, newAttributes) =>
-  (!isEstimable(story._editing) && !has(newAttributes, "storyType")) ||
-  (!isEstimable(newAttributes) && has(newAttributes, "storyType"));
+  (!isEstimable(story._editing) && !has(newAttributes, 'storyType')) ||
+  (!isEstimable(newAttributes) && has(newAttributes, 'storyType'));
 
-const hasEstimate = (story) => Boolean(story.estimate);
+const hasEstimate = story => Boolean(story.estimate);
 
 export const editStory = (story, newAttributes) => {
   const newStory = {
@@ -257,7 +257,7 @@ export const editStory = (story, newAttributes) => {
   };
 };
 
-export const serialize = (story) => {
+export const serialize = story => {
   const data = !isRelease(story)
     ? {
         ...story,
@@ -265,9 +265,9 @@ export const serialize = (story) => {
       }
     : {
         ...story,
-        estimate: "",
+        estimate: '',
         ownedById: null,
-        labels: "",
+        labels: '',
         ownedByName: null,
         ownedByInitials: null,
         notes: [],
@@ -292,13 +292,13 @@ export const deserialize = (data, options) => {
   return {
     ...story,
     labels: Label.splitLabels(story.labels),
-    estimate: story.estimate || "",
+    estimate: story.estimate || '',
     documents: (story.documents ?? []).map(document => document.file),
-    collapsed
+    collapsed,
   };
 };
 
-export const setLoadingStory = (story) => ({
+export const setLoadingStory = story => ({
   ...story,
   _editing: setLoadingValue(story._editing, true),
 });
@@ -308,7 +308,7 @@ export const setLoadingValue = (story, loading) => ({
   loading,
 });
 
-export const cloneStory = (story) => {
+export const cloneStory = story => {
   const clonedStory = {
     ...story,
     id: null,
@@ -326,34 +326,6 @@ export const cloneStory = (story) => {
   };
 };
 
-export const mergeWithFetchedStories = (
-  currentStories,
-  fetchedStories,
-  pastStoryIds
-) => {
-  const storyNotSaved = currentStories.filter(isNew);
-
-  const editedStories = fetchedStories.map((fetchedStory) => {
-    const existingStory = currentStories.find(
-      (story) => story.id === fetchedStory.id
-    );
-    if (existingStory && !existingStory.collapsed) {
-      return {
-        ...fetchedStory,
-        collapsed: false,
-        _editing: existingStory._editing,
-      };
-    }
-    return fetchedStory;
-  });
-
-  const pastStories = pastStoryIds.map((id) =>
-    currentStories.find((story) => story.id === id)
-  ).filter((story) => story !== undefined);
-
-  return [...storyNotSaved, ...editedStories, ...pastStories];
-};
-
 export const createNewStory = (stories, storyAttributes) => {
   const story = stories.find(isNew);
 
@@ -361,10 +333,13 @@ export const createNewStory = (stories, storyAttributes) => {
     editStory(story, storyAttributes);
   }
 
+  const newId = createTemporaryId();
+
   const newStory = {
     ...emptyStory,
     ...storyAttributes,
     collapsed: false,
+    id: newId,
   };
 
   return {
@@ -373,61 +348,62 @@ export const createNewStory = (stories, storyAttributes) => {
   };
 };
 
+export const createTemporaryId = () => Symbol(`new-${Date.now()}`);
+
 export const withScope = (stories, from) =>
   Boolean(from) ? stories[from] : stories[storyScopes.ALL];
 
-export const isSearch = (from) => from === storyScopes.SEARCH;
+export const isSearch = from => from === storyScopes.SEARCH;
 
-export const isEpic = (from) => from === storyScopes.EPIC;
+export const isEpic = from => from === storyScopes.EPIC;
 
 export const haveHighlightButton = (stories, story, from) =>
   (isEpic(from) || isSearch(from)) && haveStory(story, stories);
 
-export const haveSearch = (stories) =>
+export const haveSearch = stories =>
   Boolean(stories[storyScopes.SEARCH].length);
 
 export const haveStory = (story, stories) =>
-  stories.some((item) => item.id === story.id);
+  stories.some(item => item.id === story.id);
 
-export const isNew = (story) => story.id === null;
+export const isNew = story => {
+  return typeof story.id === 'symbol';
+};
 
-export const canSave = (story) =>
-  !isAccepted(story) && story._editing.title !== "";
+export const canSave = story =>
+  !isAccepted(story) && story._editing.title !== '';
 
-export const canDelete = (story) => !isAccepted(story) && !isNew(story);
+export const canDelete = story => !isAccepted(story) && !isNew(story);
 
-export const canEdit = (story) => !isAccepted(story);
+export const canEdit = story => !isAccepted(story);
 
-export const withoutNewStory = (stories) =>
-  stories.filter((story) => !isNew(story));
+export const withoutNewStory = (stories, id) =>
+  stories.filter(story => story.id !== id);
 
-export const replaceOrAddNewStory = (stories, newStory) => {
-  if (shouldReplace(stories)) {
-    return stories.map((story) => (isNew(story) ? newStory : story));
+export const replaceOrAddNewStory = (stories, newStory, id) => {
+  if (id) {
+    return stories.map(story => (story.id === id ? newStory : story));
   }
 
   return [newStory, ...stories];
 };
 
-const shouldReplace = (stories) => stories.some(isNew);
-
 const emptyStory = {
-  id: null,
-  title: "",
+  title: '',
   description: null,
-  estimate: "",
-  storyType: "feature",
-  state: "unscheduled",
+  estimate: '',
+  storyType: 'feature',
+  state: 'unscheduled',
   acceptedAt: null,
   requestedById: null,
   ownedById: null,
   projectId: null,
-  createdAt: "",
-  updatedAt: "",
-  position: "",
+  createdAt: '',
+  updatedAt: '',
+  position: '',
   newPosition: null,
   labels: [],
-  requestedByName: "",
+  requestedByName: '',
   ownedByName: null,
   ownedByInitials: null,
   releaseDate: null,
@@ -438,13 +414,13 @@ const emptyStory = {
 };
 
 export const storyTransitions = {
-  START: "start",
-  FINISH: "finish",
-  DELIVER: "deliver",
-  ACCEPT: "accept",
-  REJECT: "reject",
-  RESTART: "restart",
-  RELEASE: "release",
+  START: 'start',
+  FINISH: 'finish',
+  DELIVER: 'deliver',
+  ACCEPT: 'accept',
+  REJECT: 'reject',
+  RESTART: 'restart',
+  RELEASE: 'release',
 };
 
 const stateTransitions = {
@@ -489,8 +465,8 @@ export const editingStoryPropTypesShape = PropTypes.shape({
   _editing: StoryPropTypesShape,
 });
 
-export const donePoints = (stories) =>
+export const donePoints = stories =>
   stories.reduce((points, story) => getCompletedPoints(story) + points, 0);
 
-export const remainingPoints = (stories) =>
+export const remainingPoints = stories =>
   totalPoints(stories) - donePoints(stories);
