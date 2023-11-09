@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import CollapsedStory from './CollapsedStory';
 import ExpandedStory from './ExpandedStory';
 import { connect } from 'react-redux';
-import { expandOrCollapseStory, fetchEpic } from '../../actions/story';
+import { toggleStory, fetchEpic } from '../../actions/story';
 import {
   releaseIsLate,
   isHighlighted,
@@ -13,7 +13,7 @@ import classNames from 'classnames';
 
 export const StoryItem = ({
   story,
-  expandOrCollapseStory,
+  toggleStory,
   from,
   index,
   sprintIndex,
@@ -37,7 +37,7 @@ export const StoryItem = ({
   const childProps = {
     story,
     onToggle: () => {
-      expandOrCollapseStory(story, from);
+      toggleStory(story, from);
     },
     className,
     title,
@@ -61,7 +61,7 @@ export const StoryItem = ({
 
 StoryItem.propTypes = {
   story: PropTypes.object.isRequired,
-  expandOrCollapseStory: PropTypes.func.isRequired,
+  toggleStory: PropTypes.func.isRequired,
 };
 
-export default connect(null, { fetchEpic, expandOrCollapseStory })(StoryItem);
+export default connect(null, { fetchEpic, toggleStory })(StoryItem);

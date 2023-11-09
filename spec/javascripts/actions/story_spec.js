@@ -7,16 +7,16 @@ import { sendErrorNotification } from 'actions/notifications';
 
 jest.mock('actions/notifications');
 jest.mock('../../../app/assets/javascripts/services/httpService');
-jest.mock("../../../app/assets/javascripts/reducers/stories", () => ({
+jest.mock('../../../app/assets/javascripts/reducers/stories', () => ({
   storiesWithScope: jest.fn(),
 }));
 
-describe("Story Actions", () => {
-  describe("saveStory", () => {
+describe('Story Actions', () => {
+  describe('saveStory', () => {
     const story = storyFactory();
     const projectId = 42;
 
-    it("calls Story.update with story._editing and projectId", async () => {
+    it('calls Story.update with story._editing and projectId', async () => {
       const editedStory = {
         ...story,
         _editing: {
@@ -49,41 +49,7 @@ describe("Story Actions", () => {
       );
     });
 
-    it("dispatch only toggleStory when _isDirty is false", async () => {
-      const editedStory = {
-        ...story,
-        _editing: {
-          ...story,
-          _isDirty: false,
-        },
-      };
-
-      const FakeStory = {
-        findById: sinon.stub().returns(editedStory),
-        update: sinon.stub().resolves(story),
-        isNew: sinon.stub().returns(false),
-      };
-
-      const fakeDispatch = sinon.stub().resolves({});
-
-      const fakeGetState = sinon.stub();
-      fakeGetState.returns({ stories: { all: [editedStory] } });
-
-      await Story.saveStory(editedStory.id, projectId)(
-        fakeDispatch,
-        fakeGetState,
-        { Story: FakeStory }
-      );
-
-      expect(fakeDispatch).toHaveBeenCalledWith(
-        Story.toggleStory(editedStory.id)
-      );
-      expect(fakeDispatch).not.toHaveBeenCalledWith(
-        Story.updateStorySuccess(story)
-      );
-    });
-
-    it("dispatch updateStorySuccess when _isDirty", async () => {
+    it('dispatch updateStorySuccess when _isDirty', async () => {
       const editedStory = {
         ...story,
         _editing: {
@@ -115,7 +81,7 @@ describe("Story Actions", () => {
       );
     });
 
-    it("dispatch only addStory when isNew", async () => {
+    it('dispatch only addStory when isNew', async () => {
       const editedStory = {
         ...story,
         _editing: {
@@ -152,8 +118,8 @@ describe("Story Actions", () => {
       );
     });
 
-    it("dispatches storyFailure when promise fails", async () => {
-      const error = { error: "boom" };
+    it('dispatches storyFailure when promise fails', async () => {
+      const error = { error: 'boom' };
 
       const editedStory = {
         ...story,
@@ -187,12 +153,12 @@ describe("Story Actions", () => {
     });
   });
 
-  describe("deleteStory", () => {
+  describe('deleteStory', () => {
     const storyId = 420;
     const projectId = 42;
-    const story = { id: storyId, title: "foo" };
+    const story = { id: storyId, title: 'foo' };
 
-    it("calls Story.deleteStory with projectId and storyId", async () => {
+    it('calls Story.deleteStory with projectId and storyId', async () => {
       const FakeStory = {
         findById: sinon.stub().returns(story),
         deleteStory: sinon.stub().resolves({}),
@@ -211,7 +177,7 @@ describe("Story Actions", () => {
       expect(FakeStory.deleteStory).toHaveBeenCalledWith(storyId, projectId);
     });
 
-    it("dispatch deleteStorySuccess", async () => {
+    it('dispatch deleteStorySuccess', async () => {
       const FakeStory = {
         findById: sinon.stub().returns(story),
         deleteStory: sinon.stub().resolves({}),
@@ -230,8 +196,8 @@ describe("Story Actions", () => {
       );
     });
 
-    it("dispatches storyFailure when promise fails", async () => {
-      const error = { error: "boom" };
+    it('dispatches storyFailure when promise fails', async () => {
+      const error = { error: 'boom' };
 
       const FakeStory = {
         findById: sinon.stub().returns(story),
@@ -252,8 +218,8 @@ describe("Story Actions", () => {
     });
   });
 
-  describe("highlight", () => {
-    it("always dispatch updateHighlight", () => {
+  describe('highlight', () => {
+    it('always dispatch updateHighlight', () => {
       const storyId = 1;
       const fakeDispatch = sinon.stub().resolves({});
       const fakeGetState = sinon.stub().returns({});
@@ -266,7 +232,7 @@ describe("Story Actions", () => {
     });
   });
 
-  describe("dragDropStory", () => {
+  describe('dragDropStory', () => {
     const story = storyFactory();
     const updatedStories = [
       { ...story, newPosition: 4, id: 42 },
@@ -275,7 +241,7 @@ describe("Story Actions", () => {
     const updatedStory = { ...story, newPosition: 4 };
     const from = 1;
 
-    it("calls Story.sortStoriesSuccess with new position", async () => {
+    it('calls Story.sortStoriesSuccess with new position', async () => {
       const FakeStory = {
         findById: sinon.stub().returns(updatedStory),
         updatePosition: sinon.stub().resolves(updatedStories),
@@ -303,8 +269,8 @@ describe("Story Actions", () => {
       );
     });
 
-    describe("when promise fails", () => {
-      const error = { error: "boom" };
+    describe('when promise fails', () => {
+      const error = { error: 'boom' };
 
       const FakeStory = {
         findById: sinon.stub().returns(updatedStory),
@@ -325,13 +291,13 @@ describe("Story Actions", () => {
         })(fakeDispatch, fakeGetState, { Story: FakeStory });
       });
 
-      it("dispatches storyFailure", () => {
+      it('dispatches storyFailure', () => {
         expect(fakeDispatch).toHaveBeenCalledWith(
           Story.storyFailure(updatedStory.id, error)
         );
       });
 
-      it("do not dispatch sortStoriesSuccess", () => {
+      it('do not dispatch sortStoriesSuccess', () => {
         expect(fakeDispatch).not.toHaveBeenCalledWith(
           Story.sortStoriesSuccess(updatedStory)
         );
@@ -339,14 +305,14 @@ describe("Story Actions", () => {
     });
   });
 
-  describe("confirmBeforeSaveIfNeeded", () => {
+  describe('confirmBeforeSaveIfNeeded', () => {
     let story;
 
     beforeEach(() => {
       story = storyFactory();
     });
 
-    describe("when do not need of confirmation", () => {
+    describe('when do not need of confirmation', () => {
       let needConfirmation;
       let confirm;
 
@@ -355,8 +321,8 @@ describe("Story Actions", () => {
         confirm = sinon.stub();
       });
 
-      describe("and callback.onConfirmed do not throws an error", () => {
-        it("call callback.onConfirmed", async () => {
+      describe('and callback.onConfirmed do not throws an error', () => {
+        it('call callback.onConfirmed', async () => {
           const callback = { onConfirmed: sinon.stub() };
 
           await Story.confirmBeforeSaveIfNeeded(
@@ -369,12 +335,12 @@ describe("Story Actions", () => {
         });
       });
 
-      describe("and callback.onConfirmed throws an error", () => {
+      describe('and callback.onConfirmed throws an error', () => {
         let error;
         let callback;
 
         beforeEach(() => {
-          error = { error: "boom" };
+          error = { error: 'boom' };
           callback = {
             onConfirmed: sinon.stub().rejects(error),
             onError: sinon.stub(),
@@ -382,7 +348,7 @@ describe("Story Actions", () => {
           };
         });
 
-        it("call callback.onConfirmed", async () => {
+        it('call callback.onConfirmed', async () => {
           await Story.confirmBeforeSaveIfNeeded(
             story,
             confirm,
@@ -393,7 +359,7 @@ describe("Story Actions", () => {
           expect(callback.onConfirmed).toHaveBeenCalled();
         });
 
-        it("call callback.onError", async () => {
+        it('call callback.onError', async () => {
           await Story.confirmBeforeSaveIfNeeded(
             story,
             confirm,
@@ -404,7 +370,7 @@ describe("Story Actions", () => {
           expect(callback.onError).toHaveBeenCalled();
         });
 
-        it("do not call callback.onCanceled", async () => {
+        it('do not call callback.onCanceled', async () => {
           await Story.confirmBeforeSaveIfNeeded(
             story,
             confirm,
@@ -417,8 +383,8 @@ describe("Story Actions", () => {
       });
     });
 
-    describe("when need of confirmation", () => {
-      describe("and is not confirmed", () => {
+    describe('when need of confirmation', () => {
+      describe('and is not confirmed', () => {
         let callback;
         let needConfirmation;
         let confirm;
@@ -429,7 +395,7 @@ describe("Story Actions", () => {
           confirm = sinon.stub().returns(false);
         });
 
-        it("do not call callback.onConfirmed", async () => {
+        it('do not call callback.onConfirmed', async () => {
           await Story.confirmBeforeSaveIfNeeded(
             story,
             confirm,
@@ -440,7 +406,7 @@ describe("Story Actions", () => {
           expect(callback.onConfirmed).not.toHaveBeenCalled();
         });
 
-        it("call callback.onCanceled", async () => {
+        it('call callback.onCanceled', async () => {
           await Story.confirmBeforeSaveIfNeeded(
             story,
             confirm,
@@ -452,7 +418,7 @@ describe("Story Actions", () => {
         });
       });
 
-      describe("and is confirmed", () => {
+      describe('and is confirmed', () => {
         let needConfirmation;
         let confirm;
 
@@ -461,8 +427,8 @@ describe("Story Actions", () => {
           confirm = sinon.stub().returns(true);
         });
 
-        describe("and callback.onConfirmed do not throws an error", () => {
-          it("call callback.onConfirmed", async () => {
+        describe('and callback.onConfirmed do not throws an error', () => {
+          it('call callback.onConfirmed', async () => {
             const callback = { onConfirmed: sinon.stub() };
 
             await Story.confirmBeforeSaveIfNeeded(
@@ -475,12 +441,12 @@ describe("Story Actions", () => {
           });
         });
 
-        describe("and callback.onConfirmed throws an error", () => {
+        describe('and callback.onConfirmed throws an error', () => {
           let error;
           let callback;
 
           beforeEach(() => {
-            error = { error: "boom" };
+            error = { error: 'boom' };
             callback = {
               onConfirmed: sinon.stub().rejects(error),
               onError: sinon.stub(),
@@ -488,7 +454,7 @@ describe("Story Actions", () => {
             };
           });
 
-          it("call callback.onConfirmed", async () => {
+          it('call callback.onConfirmed', async () => {
             await Story.confirmBeforeSaveIfNeeded(
               story,
               confirm,
@@ -499,7 +465,7 @@ describe("Story Actions", () => {
             expect(callback.onConfirmed).toHaveBeenCalled();
           });
 
-          it("call callback.onError", async () => {
+          it('call callback.onError', async () => {
             await Story.confirmBeforeSaveIfNeeded(
               story,
               confirm,
@@ -510,7 +476,7 @@ describe("Story Actions", () => {
             expect(callback.onError).toHaveBeenCalled();
           });
 
-          it("do not call callback.onCanceled", async () => {
+          it('do not call callback.onCanceled', async () => {
             await Story.confirmBeforeSaveIfNeeded(
               story,
               confirm,
@@ -525,21 +491,21 @@ describe("Story Actions", () => {
     });
   });
 
-  describe("fetchEpic", () => {
+  describe('fetchEpic', () => {
     let stories;
     let fakeGetState;
     let fakeDispatch;
-    const label = "label";
+    const label = 'label';
 
     beforeEach(() => {
       fakeGetState = jest.fn(() => ({
-        projectBoard: { projectId: "test-project" },
+        projectBoard: { projectId: 'test-project' },
       }));
       stories = Array(3).fill(storyFactory());
       fakeDispatch = jest.fn();
     });
 
-    describe("when does not throws an error", () => {
+    describe('when does not throws an error', () => {
       let fakeStory;
 
       beforeEach(() => {
@@ -548,17 +514,17 @@ describe("Story Actions", () => {
         };
       });
 
-      it("dispatch receiveStories with stories in epic scope", async () => {
+      it('dispatch receiveStories with stories in epic scope', async () => {
         await Story.fetchEpic(label)(fakeDispatch, fakeGetState, {
           Story: fakeStory,
         });
 
         expect(fakeDispatch).toHaveBeenCalledWith(
-          Story.receiveStories(stories, "epic")
+          Story.receiveStories(stories, 'epic')
         );
       });
 
-      it("does not dispatch sendDefaultErrorNotification", async () => {
+      it('does not dispatch sendDefaultErrorNotification', async () => {
         await Story.fetchEpic(label)(fakeDispatch, fakeGetState, {
           Story: fakeStory,
         });
@@ -570,7 +536,7 @@ describe("Story Actions", () => {
     });
   });
 
-  describe('expandOrCollapseStory', () => {
+  describe('toggleStory', () => {
     const fakeDispatch = jest.fn();
     beforeEach(() => {
       jest.clearAllMocks();
@@ -580,28 +546,28 @@ describe("Story Actions", () => {
     const dependencies = { Story: { deserialize: () => {} } };
 
     describe('when is expanded', () => {
-      it('should dispatch toggleStory', async () => {
-        const thunkFunction = Story.expandOrCollapseStory(expandedStory, undefined);
+      it('should dispatch collapseStory', async () => {
+        const thunkFunction = Story.toggleStory(expandedStory, undefined);
         await thunkFunction(fakeDispatch, null, dependencies);
         expect(fakeDispatch).toHaveBeenCalledWith({
-          type: actionTypes.TOGGLE_STORY,
-          id: expandedStory.id,
-          from: undefined
+          type: actionTypes.COLLAPSE_STORY,
+          storyId: expandedStory.id,
+          from: undefined,
         });
       });
 
       it('should not dispatch "updateStorySuccess"', async () => {
-        const thunkFunction = Story.expandOrCollapseStory(expandedStory, undefined);
+        const thunkFunction = Story.toggleStory(expandedStory, undefined);
         await thunkFunction(fakeDispatch, null, dependencies);
         expect(fakeDispatch).not.toHaveBeenCalledWith({
           type: actionTypes.UPDATE_STORY_SUCCESS,
           story: expandedStory,
-          from: undefined
+          from: undefined,
         });
       });
 
       it('should not dispatch loading', async () => {
-        const thunkFunction = Story.expandOrCollapseStory(expandedStory, undefined);
+        const thunkFunction = Story.toggleStory(expandedStory, undefined);
         await thunkFunction(fakeDispatch, null, dependencies);
         expect(fakeDispatch).not.toHaveBeenCalledWith({
           type: actionTypes.SET_LOADING_STORY,
@@ -613,7 +579,7 @@ describe("Story Actions", () => {
 
     describe('when is collapsed', () => {
       it('should dispatch loading', async () => {
-        const thunkFunction = Story.expandOrCollapseStory(collapsedStory, undefined);
+        const thunkFunction = Story.toggleStory(collapsedStory, undefined);
         await thunkFunction(fakeDispatch, null, dependencies);
         expect(fakeDispatch).toHaveBeenCalledWith({
           type: actionTypes.SET_LOADING_STORY,
@@ -624,25 +590,25 @@ describe("Story Actions", () => {
 
       describe('when request is successful', () => {
         beforeEach(() => {
-          httpService.get.mockResolvedValue({ data: { story: { } } });
+          httpService.get.mockResolvedValue({ data: { story: {} } });
         });
         it('should dispatch "updateStorySuccess"', async () => {
-          const thunkFunction = Story.expandOrCollapseStory(collapsedStory, undefined);
+          const thunkFunction = Story.toggleStory(collapsedStory, undefined);
           await thunkFunction(fakeDispatch, null, dependencies);
           expect(fakeDispatch).toHaveBeenCalledWith({
             type: actionTypes.UPDATE_STORY_SUCCESS,
             story: collapsedStory,
-            from: undefined
+            from: undefined,
           });
         });
 
-        it('should dispatch toggleStory on success', async () => {
-          const thunkFunction = Story.expandOrCollapseStory(collapsedStory, undefined);
+        it('should dispatch expandStory on success', async () => {
+          const thunkFunction = Story.toggleStory(collapsedStory, undefined);
           await thunkFunction(fakeDispatch, null, dependencies);
           expect(fakeDispatch).toHaveBeenCalledWith({
-            type: actionTypes.TOGGLE_STORY,
-            id: collapsedStory.id,
-            from: undefined
+            type: actionTypes.EXPAND_STORY,
+            storyId: collapsedStory.id,
+            from: undefined,
           });
         });
       });
@@ -652,7 +618,7 @@ describe("Story Actions", () => {
           httpService.get.mockRejectedValue();
         });
         it('should handle fetch error', async () => {
-          const thunkFunction = Story.expandOrCollapseStory(collapsedStory, undefined);
+          const thunkFunction = Story.toggleStory(collapsedStory, undefined);
           await thunkFunction(fakeDispatch, null, dependencies);
           expect(sendErrorNotification).toHaveBeenCalled();
         });
