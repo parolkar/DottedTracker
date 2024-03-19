@@ -1,7 +1,7 @@
-CM42 Central
+Dotted Tracker - A Pivotal Tracker Inspired Agile Project Planning Tool
 ============
 
-[CM42 Central](http://www.centralcm42.com/) is an application to provide a user story based backlog management
+[Inspired by CM42 Central](http://www.centralcm42.com/) is an application to provide a user story based backlog management
 system for agile development teams.
 
 [![Build Status](https://github.com/Codeminer42/cm42-central/actions/workflows/cm42-central.yml/badge.svg)](https://github.com/Codeminer42/cm42-central/actions/workflows/cm42-central.yml)
@@ -11,10 +11,10 @@ system for agile development teams.
 ![Project Screenshot](https://raw.githubusercontent.com/Codeminer42/cm42-central/master/doc/cm42-central-screenshot.png)
 ![Reports Screenshot](https://raw.githubusercontent.com/Codeminer42/cm42-central/master/doc/cm42-central-reports.png)
 
-The Codeminer 42 Feature Set
+The Dotted Tracker Feature Set
 ----------------------------
 
-CM42-Central is a fork of the discontinued Fulcrum project.
+Dotted Tracker is a fork of the discontinued Fulcrum project via CM42-Central .
 The old project has not received anything new in the last couple of years, but our fork has evolved considerably
 and we consider it the new upstream for all intents and purposes.
 
